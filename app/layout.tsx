@@ -4,9 +4,6 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Crazy Good — Coming Soon",
   description: "Join the Crazy Good community for early access.",
-  icons: {
-    icon: "/favicon.svg",
-  },
 };
 
 export const viewport: Viewport = {
