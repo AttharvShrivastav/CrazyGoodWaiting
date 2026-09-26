@@ -8,27 +8,16 @@ A minimal Next.js waitlist page, ready for Vercel.
 2. Add the Monument Extended webfonts to `public/fonts/` as:
    - `MonumentExtended-Regular.woff2`
    - `MonumentExtended-Ultrabold.woff2` (optional; regular is used as fallback)
-3. Copy `.env.example` to `.env.local` and set `DATABASE_URL`.
-4. For a new database, run `db/schema.sql` once. If the previous email-based
-   waitlist schema is already deployed, run
-   `db/migrations/001_email_to_name_and_contact.sql` instead. The migration
-   keeps existing email signups and makes email optional for new submissions.
-5. Run `npm install`, then `npm run dev`.
+3. Copy `.env.example` to `.env.local` and set:
+   - `GOOGLE_SHEETS_WEBHOOK_URL` to the deployed Google Apps Script web app URL.
+   - `WAITLIST_SECRET` to the same secret configured in the Apps Script.
+4. Run `npm install`, then `npm run dev`.
 
-Vercel only needs the same `DATABASE_URL` environment variable. Database credentials stay server-side.
+Add both environment variables to the Vercel project before deploying. They are
+read only by `POST /api/waitlist` and are never included in browser JavaScript.
 
 ## Viewing waitlist submissions
 
-For this temporary site, submissions can be viewed directly in the managed
-Postgres or Neon database dashboard. No public admin route or read API is
-exposed.
-
-```sql
-SELECT
-  id,
-  name,
-  contact_number,
-  created_at
-FROM waitlist
-ORDER BY created_at DESC;
-```
+Submissions are appended by the server-side API route to the Google Sheet
+connected to the Apps Script. View entries directly in that Sheet. The site has
+no public admin route or read API.

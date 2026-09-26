@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
-import { getPool } from "@/lib/db";
 
 export const runtime = "nodejs";
 
+const minimumNameLength = 2;
+const maximumNameLength = 80;
+const maximumContactLength = 32;
 const allowedContactPattern = /^\+?[\d\s().-]+$/;
 
 function normalizeSpacing(value: string) {
@@ -12,7 +14,7 @@ function normalizeSpacing(value: string) {
 function isValidContactNumber(value: string) {
   const digits = value.replace(/\D/g, "");
   return (
-    value.length <= 32 &&
+    value.length <= maximumContactLength &&
     allowedContactPattern.test(value) &&
     digits.length >= 7 &&
     digits.length <= 15
@@ -24,16 +26,31 @@ function normalizeContactNumber(value: string) {
   return `${value.startsWith("+") ? "+" : ""}${digits}`;
 }
 
+function errorResponse(status = 503) {
+  return NextResponse.json(
+    {
+      ok: false,
+      status: "error",
+      message: "Waitlist is temporarily unavailable.",
+    },
+    { status },
+  );
+}
+
+type AppsScriptResponse = {
+  success?: unknown;
+  duplicate?: unknown;
+  error?: unknown;
+};
+
 export async function POST(request: Request) {
   let body: unknown;
 
   try {
     body = await request.json();
-  } catch {
-    return NextResponse.json(
-      { ok: false, status: "invalid-name", message: "Enter your name." },
-      { status: 400 },
-    );
+  } catch (error) {
+    console.error("Waitlist request body was not valid JSON:", error);
+    return errorResponse(400);
   }
 
   const name =
@@ -51,7 +68,7 @@ export async function POST(request: Request) {
       ? normalizeSpacing(body.contactNumber)
       : "";
 
-  if (!name || name.length > 80) {
+  if (name.length < minimumNameLength || name.length > maximumNameLength) {
     return NextResponse.json(
       { ok: false, status: "invalid-name", message: "Enter your name." },
       { status: 400 },
@@ -70,33 +87,60 @@ export async function POST(request: Request) {
   }
 
   const normalizedContactNumber = normalizeContactNumber(contactNumber);
+  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL?.trim();
+  const secret = process.env.WAITLIST_SECRET?.trim();
+
+  if (!webhookUrl || !secret) {
+    console.error("Waitlist webhook configuration is missing.");
+    return errorResponse();
+  }
 
   try {
-    const pool = getPool();
-    await pool.query(
-      "INSERT INTO waitlist (name, contact_number) VALUES ($1, $2)",
-      [name, normalizedContactNumber],
-    );
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        contactNumber: normalizedContactNumber,
+        secret,
+      }),
+      cache: "no-store",
+      signal: AbortSignal.timeout(10_000),
+    });
 
-    return NextResponse.json({ ok: true, status: "success" }, { status: 201 });
-  } catch (error) {
+    if (!response.ok) {
+      console.error("Waitlist webhook returned a non-success status:", response.status);
+      return errorResponse();
+    }
+
+    let result: AppsScriptResponse;
+
+    try {
+      result = (await response.json()) as AppsScriptResponse;
+    } catch (error) {
+      console.error("Waitlist webhook returned invalid JSON:", error);
+      return errorResponse();
+    }
+
     if (
-      typeof error === "object" &&
-      error !== null &&
-      "code" in error &&
-      error.code === "23505"
+      typeof result !== "object" ||
+      result === null ||
+      result.success !== true ||
+      typeof result.duplicate !== "boolean"
     ) {
+      const upstreamMessage =
+        typeof result?.error === "string" ? result.error.slice(0, 200) : "Unknown error";
+      console.error("Waitlist webhook rejected the submission:", upstreamMessage);
+      return errorResponse();
+    }
+
+    if (result.duplicate) {
       return NextResponse.json({ ok: true, status: "duplicate" });
     }
 
-    console.error("Waitlist submission failed:", error);
-    return NextResponse.json(
-      {
-        ok: false,
-        status: "error",
-        message: "Waitlist is temporarily unavailable.",
-      },
-      { status: 503 },
-    );
+    return NextResponse.json({ ok: true, status: "success" }, { status: 201 });
+  } catch (error) {
+    console.error("Waitlist webhook request failed:", error);
+    return errorResponse();
   }
 }
