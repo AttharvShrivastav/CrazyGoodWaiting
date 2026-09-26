@@ -140,7 +140,7 @@ input {
 
 .waitlist-form input {
   width: 100%;
-  border: 1.5px solid color-mix(in srgb, var(--orange) 74%, white);
+  border: 1.5px dashed color-mix(in srgb, var(--orange) 74%, white);
   outline: 0;
   background: rgba(255, 255, 255, 0.28);
   color: var(--ink);
