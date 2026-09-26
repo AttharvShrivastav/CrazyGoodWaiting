@@ -1,0 +1,526 @@
+@font-face {
+  font-family: "Monument Extended";
+  src: url("/fonts/MonumentExtended-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Monument Extended";
+  src: url("/fonts/MonumentExtended-Ultrabold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+}
+
+:root {
+  --paper: #fbf7f1;
+  --ink: #24100c;
+  --orange: #ff6436;
+  --orange-dark: #e94e25;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--paper);
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Monument Extended", Arial Black, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+.page-shell {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  width: 100%;
+  align-items: stretch;
+  justify-content: flex-end;
+  overflow-x: clip;
+  isolation: isolate;
+}
+
+.ribbon-stage {
+  position: absolute;
+  z-index: 0;
+  inset: 0 0 auto;
+  width: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.ribbon {
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
+  z-index: var(--z);
+  width: var(--width);
+  transform: translate(-50%, -50%) rotate(var(--rotate));
+  animation: ribbon-enter 950ms cubic-bezier(0.2, 0.78, 0.24, 1) both;
+  will-change: transform, opacity;
+}
+
+.ribbon img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: none;
+  user-select: none;
+}
+
+.ribbon--yellow {
+  animation-delay: 30ms;
+}
+
+.ribbon--blue {
+  animation-delay: 110ms;
+}
+
+.ribbon--teal {
+  animation-delay: 190ms;
+}
+
+.ribbon--crazy-good {
+  animation-delay: 250ms;
+}
+
+.ribbon--red {
+  animation-delay: 330ms;
+}
+
+.waitlist-content {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.waitlist-content h1 {
+  margin-inline: auto;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.waitlist-form {
+  margin: 0 auto;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.waitlist-form input,
+.waitlist-form button {
+  height: var(--control-height);
+  min-height: 0;
+  border-radius: 999px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.waitlist-form input {
+  width: 100%;
+  border: 1.5px solid color-mix(in srgb, var(--orange) 74%, white);
+  outline: 0;
+  background: rgba(255, 255, 255, 0.28);
+  color: var(--ink);
+  padding: 0 22px;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.waitlist-form input::placeholder {
+  color: rgba(36, 16, 12, 0.58);
+  opacity: 1;
+}
+
+.waitlist-form input:hover {
+  border-color: var(--orange);
+}
+
+.waitlist-form input:focus-visible {
+  border-color: var(--orange-dark);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 4px rgba(255, 100, 54, 0.18);
+}
+
+.waitlist-form button {
+  border: 0;
+  background: var(--orange);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 0 24px;
+  transition: transform 160ms ease, background 160ms ease, box-shadow 160ms ease;
+}
+
+.waitlist-form button:hover:not(:disabled) {
+  background: #ff754c;
+  transform: translateY(-2px);
+}
+
+.waitlist-form button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.waitlist-form button:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.waitlist-form button:disabled,
+.waitlist-form input:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.form-status {
+  min-height: 1.2em;
+  margin: 15px 0 0;
+  color: var(--orange-dark);
+  font-size: 0.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  opacity: 0;
+  transform: translateY(-3px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.form-status.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-status.is-error {
+  color: #b52d1d;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes ribbon-enter {
+  from {
+    opacity: 0;
+    translate: 0 -34px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ribbon-stage {
+    height: 54svh;
+    min-height: 410px;
+    max-height: 640px;
+  }
+
+  .ribbon--yellow {
+    --width: 160vw;
+    --top: 27%;
+    --left: 50%;
+    --rotate: 7deg;
+    --z: 4;
+  }
+
+  .ribbon--blue {
+    --width: 170vw;
+    --top: 35%;
+    --left: 54%;
+    --rotate: -12deg;
+    --z: 1;
+  }
+
+  .ribbon--teal {
+    --width: 165vw;
+    --top: 58%;
+    --left: 52%;
+    --rotate: 15deg;
+    --z: 2;
+  }
+
+  .ribbon--crazy-good {
+    --width: 150vw;
+    --top: 44%;
+    --left: 50%;
+    --rotate: 0deg;
+    --z: 5;
+  }
+
+  .ribbon--red {
+    --width: 165vw;
+    --top: 59%;
+    --left: 48%;
+    --rotate: -5deg;
+    --z: 3;
+  }
+
+  .waitlist-content {
+    width: min(720px, calc(100% - 48px));
+    padding-bottom: max(6.5svh, 52px);
+  }
+
+  .waitlist-content h1 {
+    max-width: 720px;
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 0.76rem;
+  }
+
+  .waitlist-form {
+    width: 720px;
+    max-width: 100%;
+  }
+
+  .form-row {
+    gap: 14px;
+  }
+
+  .waitlist-form input,
+  .waitlist-form button {
+    --control-height: 44px;
+    font-size: 0.68rem;
+  }
+
+  .waitlist-form .waitlist-input--name {
+    width: 210px;
+  }
+
+  .waitlist-form .waitlist-input--contact {
+    width: 260px;
+  }
+
+  .waitlist-form button {
+    width: 140px;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .ribbon-stage {
+    height: 52svh;
+    min-height: 360px;
+    max-height: 560px;
+  }
+
+  .ribbon--yellow {
+    --width: 190vw;
+    --top: 26%;
+    --left: 50%;
+    --rotate: 8deg;
+    --z: 4;
+  }
+
+  .ribbon--blue {
+    --width: 200vw;
+    --top: 35%;
+    --left: 55%;
+    --rotate: -12deg;
+    --z: 1;
+  }
+
+  .ribbon--teal {
+    --width: 195vw;
+    --top: 57%;
+    --left: 52%;
+    --rotate: 15deg;
+    --z: 2;
+  }
+
+  .ribbon--crazy-good {
+    --width: 185vw;
+    --top: 44%;
+    --left: 50%;
+    --rotate: 0deg;
+    --z: 5;
+  }
+
+  .ribbon--red {
+    --width: 195vw;
+    --top: 61%;
+    --left: 48%;
+    --rotate: -6deg;
+    --z: 3;
+  }
+
+  .waitlist-content {
+    width: min(540px, calc(100% - 48px));
+    padding-bottom: max(7svh, 52px);
+  }
+
+  .waitlist-content h1 {
+    margin: 0 auto 17px;
+    font-size: 0.72rem;
+  }
+
+  .waitlist-form {
+    width: 520px;
+    max-width: 100%;
+  }
+
+  .form-row {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .waitlist-form input,
+  .waitlist-form button {
+    --control-height: 43px;
+    font-size: 0.66rem;
+  }
+
+  .waitlist-form input {
+    width: 230px;
+  }
+
+  .waitlist-form button {
+    width: 134px;
+  }
+}
+
+@media (max-width: 639px) {
+  .page-shell {
+    min-height: max(100svh, 640px);
+  }
+
+  .ribbon-stage {
+    height: 35svh;
+    min-height: 0;
+    max-height: none;
+  }
+
+  .ribbon--yellow {
+    --width: 204vw;
+    --top: 29%;
+    --left: 50%;
+    --rotate: 20deg;
+    --z: 4;
+  }
+
+  .ribbon--blue {
+    --width: 187vw;
+    --top: 34%;
+    --left: 57%;
+    --rotate: -5deg;
+    --z: 1;
+  }
+
+  .ribbon--teal {
+    --width: 196vw;
+    --top: 45%;
+    --left: 30%;
+    --rotate: 22deg;
+    --z: 2;
+  }
+
+  .ribbon--crazy-good {
+    --width: 198vw;
+    --top: 36%;
+    --left: 50%;
+    --rotate: 19deg;
+    --z: 5;
+  }
+
+  .ribbon--red {
+    --width: 198vw;
+    --top: 45%;
+    --left: 48%;
+    --rotate: 14deg;
+    --z: 3;
+  }
+
+  .waitlist-content {
+    width: 100%;
+    padding-bottom: max(58px, calc(env(safe-area-inset-bottom) + 48px));
+  }
+
+  .waitlist-content h1 {
+    max-width: 250px;
+    margin: 0 auto 12px;
+    font-size: 0.74rem;
+    line-height: 1.15;
+  }
+
+  .waitlist-form {
+    width: 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .waitlist-form input,
+  .waitlist-form button {
+    font-size: 0.65rem;
+  }
+
+  .waitlist-form input {
+    --control-height: 41px;
+    width: min(70vw, 290px);
+    padding-inline: 16px;
+  }
+
+  .waitlist-form button {
+    --control-height: 41px;
+    width: min(38vw, 158px);
+    margin-top: 3px;
+    padding-inline: 16px;
+  }
+
+  .form-status {
+    margin-top: 6px;
+    font-size: 0.58rem;
+  }
+}
+
+@media (max-width: 639px) and (max-height: 720px) {
+  .ribbon-stage {
+    height: 34svh;
+  }
+
+  .waitlist-content {
+    padding-bottom: max(42px, calc(env(safe-area-inset-bottom) + 32px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ribbon {
+    animation: none;
+  }
+
+  .waitlist-form input,
+  .waitlist-form button,
+  .form-status {
+    transition: none;
+  }
+}
