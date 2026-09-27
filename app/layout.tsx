@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import { PreloadResources } from "./preload-resources";
 
 export const metadata: Metadata = {
   title: "Crazy Good — Coming Soon",
@@ -17,7 +18,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PreloadResources />
+        {children}
+      </body>
     </html>
   );
 }
