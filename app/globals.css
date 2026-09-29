@@ -535,7 +535,7 @@ select {
   }
 
   .ribbon--yellow {
-    --width: 165vw;
+    --width: 205vw;
     --top: 25%;
     --left: 50%;
     --rotate: 2.5deg;
@@ -543,7 +543,7 @@ select {
   }
 
   .ribbon--blue {
-    --width: 172vw;
+    --width: 212vw;
     --top: 40%;
     --left: 52%;
     --rotate: -4deg;
@@ -551,7 +551,7 @@ select {
   }
 
   .ribbon--teal {
-    --width: 168vw;
+    --width: 208vw;
     --top: 57%;
     --left: 50%;
     --rotate: 4deg;
@@ -559,7 +559,7 @@ select {
   }
 
   .ribbon--crazy-good {
-    --width: 158vw;
+    --width: 200vw;
     --top: 43%;
     --left: 50%;
     --rotate: 0deg;
@@ -567,7 +567,7 @@ select {
   }
 
   .ribbon--red {
-    --width: 170vw;
+    --width: 210vw;
     --top: 58%;
     --left: 49%;
     --rotate: -3deg;
